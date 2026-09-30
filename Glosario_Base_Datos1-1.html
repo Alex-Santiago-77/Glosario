@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glosario de Clase - Bases de Datos I (UAC)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-black: #050508;
+      --bg-card: #0d0d14;
+      --neon-purple: #b026ff;
+      --neon-purple-glow: rgba(176, 38, 255, 0.5);
+      --neon-green: #00ff66;
+      --neon-green-glow: rgba(0, 255, 102, 0.5);
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-color: #1e1e2e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent; /* Elimina el recuadro gris por defecto en móviles */
+    }
+
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-main);
+      font-family: 'Rajdhani', sans-serif;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* BARRA DE NAVEGACIÓN */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 5, 8, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--neon-purple);
+      box-shadow: 0 4px 20px var(--neon-purple-glow);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green-glow);
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: var(--neon-purple);
+      text-shadow: 0 0 10px var(--neon-purple-glow);
+    }
+
+    /* BOTONES NEÓN */
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      user-select: none;
+    }
+
+    .btn-purple {
+      background: transparent;
+      color: var(--neon-purple);
+      border: 2px solid var(--neon-purple);
+      box-shadow: 0 0 10px var(--neon-purple-glow);
+    }
+
+    .btn-purple:hover, .btn-purple:active, .btn-purple.active {
+      background: var(--neon-purple);
+      color: #000;
+      box-shadow: 0 0 25px var(--neon-purple), 0 0 10px #fff;
+    }
+
+    .btn-green {
+      background: transparent;
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green-glow);
+    }
+
+    .btn-green:hover, .btn-green:active, .btn-green.active {
+      background: var(--neon-green);
+      color: #000;
+      box-shadow: 0 0 25px var(--neon-green), 0 0 10px #fff;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    /* BUSCADOR */
+    .search-container {
+      width: 100%;
+      max-width: 450px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #12121c;
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 0 10px var(--neon-green-glow);
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .search-input:focus, .search-input:hover {
+      box-shadow: 0 0 25px var(--neon-green), inset 0 0 10px var(--neon-green-glow);
+      border-color: #fff;
+    }
+
+    /* ESTRUCTURA PRINCIPAL */
+    .main-layout {
+      display: flex;
+      flex: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 2rem 1rem;
+      gap: 2rem;
+    }
+
+    /* ÍNDICE IZQUIERDA */
+    aside {
+      width: 320px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    aside::-webkit-scrollbar {
+      width: 6px;
+    }
+    aside::-webkit-scrollbar-thumb {
+      background: var(--neon-purple);
+      border-radius: 4px;
+    }
+
+    .index-title {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-purple);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--neon-purple);
+      padding-bottom: 0.5rem;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px var(--neon-purple-glow);
+    }
+
+    .index-list {
+      list-style: none;
+    }
+
+    .index-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .index-list a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      display: block;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+    }
+
+    /* EFECTO NEÓN EN ÍNDICE EN HOVER Y TOUCH */
+    .index-list a:hover, .index-list a:active {
+      color: var(--neon-green);
+      background: rgba(0, 255, 102, 0.08);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 15px var(--neon-green-glow);
+      padding-left: 0.9rem;
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* TARJETAS DE CONCEPTOS Y ILUMINACIÓN REACTIVA */
+    .concept-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--neon-purple);
+      border-radius: 10px;
+      padding: 1.8rem;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      cursor: pointer;
+    }
+
+    /* EFECTO DE RESPLANDOR NEÓN AL PASAR CURSOR O TOCAR */
+    .concept-card:hover, .concept-card:active {
+      border-color: var(--neon-green);
+      border-left-color: var(--neon-green);
+      box-shadow: 0 0 25px var(--neon-green-glow), inset 0 0 15px rgba(0, 255, 102, 0.08);
+      transform: translateY(-3px);
+    }
+
+    /* Tarjetas con bordes verdes personalizados */
+    .concept-card.green-theme {
+      border-left-color: var(--neon-green);
+    }
+    .concept-card.green-theme:hover, .concept-card.green-theme:active {
+      border-color: var(--neon-purple);
+      border-left-color: var(--neon-purple);
+      box-shadow: 0 0 25px var(--neon-purple-glow), inset 0 0 15px rgba(176, 38, 255, 0.08);
+    }
+
+    .concept-title {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-green);
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: text-shadow 0.3s ease;
+    }
+
+    .concept-card:hover .concept-title, .concept-card:active .concept-title {
+      text-shadow: 0 0 12px var(--neon-green);
+    }
+
+    .concept-body {
+      color: var(--text-main);
+      font-size: 1.05rem;
+    }
+
+    .concept-body p {
+      margin-bottom: 0.8rem;
+    }
+
+    .concept-body ul {
+      margin-left: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .concept-body li {
+      margin-bottom: 0.4rem;
+    }
+
+    .sub-heading {
+      color: var(--neon-purple);
+      font-weight: 700;
+      margin-top: 1rem;
+      margin-bottom: 0.4rem;
+      font-size: 1.1rem;
+      text-shadow: 0 0 5px var(--neon-purple-glow);
+    }
+
+    /* SECCIÓN DE CREADORES Y BIBLIOGRAFÍA */
+    .section-view {
+      display: none;
+    }
+
+    .section-view.active {
+      display: block;
+    }
+
+    .creators-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .creator-card {
+      background: #10101a;
+      border: 1px solid var(--neon-purple);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 0 10px var(--neon-purple-glow);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .creator-card:hover, .creator-card:active {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 25px var(--neon-green-glow), inset 0 0 15px rgba(0, 255, 102, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .creator-role {
+      color: var(--neon-green);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .creator-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .biblio-list {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .biblio-item {
+      background: #0f0f18;
+      border-left: 3px solid var(--neon-green);
+      padding: 1rem;
+      margin-bottom: 0.8rem;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      word-break: break-all;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .biblio-item:hover, .biblio-item:active {
+      border-left-color: var(--neon-purple);
+      box-shadow: 0 0 20px var(--neon-purple-glow);
+      background: #141424;
+      transform: translateX(5px);
+    }
+
+    .biblio-item a {
+      color: var(--neon-purple);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .biblio-item a:hover {
+      color: var(--neon-green);
+      text-decoration: underline;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .main-layout {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        position: static;
+        max-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      BD 5°A <span>// GLOSARIO BD I</span>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="⚡ Buscar en el glosario...">
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-purple active" id="btnGlossary" onclick="switchTab('glossary')">Glosario</button>
+      <button class="btn btn-green" id="btnCredits" onclick="switchTab('credits')">Equipo y Bibliografía</button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-layout">
+
+    <!-- ÍNDICE (SIDEBAR) -->
+    <aside id="sidebarIndex">
+      <h3 class="index-title">📌 ÍNDICE TEMÁTICO</h3>
+      <ul class="index-list" id="indexList">
+        <!-- Generado dinámicamente -->
+      </ul>
+    </aside>
+
+    <!-- ÁREA DE GLOSARIO -->
+    <main class="content-area section-view active" id="glossarySection">
+      
+      <div class="concept-card" id="acid-concept">
+        <h2 class="concept-title">A.C.I.D</h2>
+        <div class="concept-body">
+          <p>Las bases de datos ACID priorizan la coherencia sobre la disponibilidad: toda la transacción falla si se produce un error en cualquier paso de la transacción[cite: 2]. Por el contrario, las bases de datos BASE priorizan la disponibilidad por sobre de la coherencia[cite: 2]. En lugar de registrar un error en la transacción, los usuarios pueden acceder a datos inconsistentes de manera temporal[cite: 2]. La coherencia de datos se logra, pero no de forma inmediata[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="dba-concept">
+        <h2 class="concept-title">D.B.A</h2>
+        <div class="concept-body">
+          <p>Un administrador de bases de datos, o DBA, es responsable del mantenimiento, la seguridad y el funcionamiento de las bases de datos, y también garantiza que los datos se almacenen y recuperen correctamente[cite: 2]. Además, los administradores de bases de datos (DBA) suelen trabajar con los desarrolladores para diseñar e implementar nuevas funcionalidades y solucionar cualquier problema[cite: 2]. Un DBA debe tener un profundo conocimiento tanto de las necesidades técnicas como de las empresariales[cite: 2].</p>
+          <p>El rol del administrador de bases de datos (DBA) cobra cada vez más importancia en el entorno empresarial actual, impulsado por la información[cite: 2]. En todo el mundo, un número creciente de organizaciones depende de los datos para obtener información analítica sobre las condiciones del mercado, nuevos modelos de negocio y medidas de reducción de costos[cite: 2]. Se prevé que el mercado global de la computación en la nube también se expanda a medida que las empresas trasladen sus operaciones a la nube[cite: 2]. En consecuencia, la demanda de administradores de bases de datos cualificados seguirá en aumento[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="atomicidad-concept">
+        <h2 class="concept-title">Atomicidad</h2>
+        <div class="concept-body">
+          <p>La atomicidad es un concepto básico en los sistemas de bases de datos[cite: 2]. Significa que una transacción debe tener éxito por completo o no ejecutarse en absoluto[cite: 2]. Si algo falla a medio camino, todo se vuelve atrás como si nunca hubiera ocurrido[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-1">
+        <h2 class="concept-title">1.1. Definición de base de datos.</h2>
+        <div class="concept-body">
+          <p>Una base de datos o banco de datos es una herramienta que almacena información perteneciente a un mismo contexto, organizada y systematizada lógicamente para su posterior recuperación, análisis o transmisión[cite: 2]. Una biblioteca, un listado completo de clientes o el historial de las páginas visitadas en un navegador web son algunos ejemplos de bases de datos[cite: 2].</p>
+          <p>Las bases de datos responden al cometido de almacenar y organizar la información para poder acudir a ella posteriormente, lo que ha sido una necesidad de la humanidad desde tiempos remotos[cite: 2]. Sin embargo, solo tras el surgimiento de la electrónica y la computación, se ha podido satisfacer a muy gran escala, almacenando enormes cantidades de datos en espacios físicos limitados, a través de su conversión en señales eléctricas o magnéticas[cite: 2].</p>
+          <p>Actualmente, el manejo de las bases de datos se lleva a cabo mediante sistemas de gestión llamados DBMS (siglas en inglés de Database Management Systems, “Sistemas de Gestión de Bases de Datos”)[cite: 2]. Este tipo de software permite el almacenamiento ordenado y la rápida recuperación de la información, sacando así provecho a la automatización y las interfaces digitales[cite: 2].</p>
+          <p>Las bases de datos se pueden organizar de acuerdo a diferentes modelos y paradigmas, cada uno dotado de características, ventajas y desventajas, según su estructura, su jerarquía, su capacidad de transmisión o de interrelación, entre otros criterios posibles[cite: 2]. Estas diferencias constituyen el campo de los modelos de base de datos y permiten el diseño y la implementación de algoritmos y otros mecanismos lógicos de gestión para administrar los datos guardados[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-2">
+        <h2 class="concept-title">1.2. Importancia de las Bases de datos.</h2>
+        <div class="concept-body">
+          <p>Las Bases de Datos tienen una gran relevancia en cualquier ámbito, pero su impacto es especialmente decisivo a nivel empresarial[cite: 2]. Se consideran una de las mayores aportaciones que ha dado la informática al mundo de la empresa, ya que permiten ordenar, proteger y dar sentido a la información que sustenta la actividad diaria y la toma de decisiones[cite: 2].</p>
+          <p>Las bases de datos modernas son sistemas tan complejos que se han diseñado sistemas de gestión para manejarlas[cite: 2]. Estos sistemas de gestión de bases de datos (DBMS ) buscan optimizar y gestionar el almacenamiento y la recuperación de datos dentro de las bases de datos[cite: 2].</p>
+          <p><em>“El enfoque ACID es uno de los pilares fundamentales que guían a las organizaciones hacia una gestión de bases de datos exitosa.”</em>[cite: 2]</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-3">
+        <h2 class="concept-title">1.3. Clasificación de Bases de Datos.</h2>
+        <div class="concept-body">
+          <p>Dependiendo de cómo sean los procesos de acceso y modificación de los datos, es decir, su variabilidad, se puede distinguir entre[cite: 2]:</p>
+          <ul>
+            <li><strong>Bases de datos estáticas:</strong> Típicas de la inteligencia empresarial y otras áreas de análisis histórico, son aquellas de las cuales se puede extraer información, pero no modificar la ya existente, o sea que permiten únicamente la lectura de sus datos, no su reescritura[cite: 2].</li>
+            <li><strong>Bases de datos dinámicas:</strong> Son aquellas que además de las operaciones básicas de consulta (lectura), permiten manejar procesos de actualización, reorganización, añadidura y borrado de información[cite: 2].</li>
+          </ul>
+
+          <p>Dependiendo de cómo se encuentra organizada la información en una base de datos, se puede distinguir entre[cite: 2]:</p>
+          <ul>
+            <li><strong>Bases de datos jerárquicas:</strong> Son aquellas cuya información se dispone en estructura de árbol invertido, de manera tal que de cada nodo de información se desprenden otros nodos subsiguientes[cite: 2].</li>
+            <li><strong>Bases de datos de red:</strong> Son aquellas cuyos registros no están conectados entre sí de manera jerárquica, sino a través de enlaces en una red de información[cite: 2].</li>
+            <li><strong>Bases de datos relacionales:</strong> Son aquellas cuya información se dispone en tablas conocidas como “relaciones”, compuestas por un conjunto de campos y registros, y que se comunican entre sí mediante llaves primarias y foráneas[cite: 2].</li>
+            <li><strong>Bases de datos multidimensionales:</strong> Son aquellas cuyos datos se organizan en dimensiones y medidas, normalmente en estructuras tipo cubo, para facilitar el análisis[cite: 2].</li>
+            <li><strong>Bases de datos orientadas a objetos:</strong> Son aquellas que representan la información mediante objetos generados a través de un lenguaje de programación[cite: 2].</li>
+          </ul>
+
+          <p>De acuerdo a la naturaleza de la información que contienen, las bases de datos pueden ser[cite: 2]:</p>
+          <ul>
+            <li><strong>Bases de datos bibliográficos:</strong> Son aquellas que contienen los datos de referencia de algún material de lectura (como libros, periódicos y revistas), conocidos como metadata[cite: 2]. No resguardan el contenido del texto, sino información clave, como el autor, el editor, el año de aparición, el área temática y el título del libro, entre otras posibilidades[cite: 2].</li>
+            <li><strong>Bases de datos de texto completo:</strong> Son aquellas que manejan textos íntegros, normalmente digitalizados o incluso fotografiados, por lo que son convenientes para preservar y organizar textos históricos o documentales, entre otras fuentes primarias[cite: 2].</li>
+            <li><strong>Directorios:</strong> Son listados enormes de datos personalizados, como direcciones de correo electrónico, números telefónicos, documentos de identidad, entre otros, que comparten un contexto o un interés específico[cite: 2].</li>
+            <li><strong>Bases de datos especializadas:</strong> Son aquellos repositorios de información especializada o técnica, pensados a partir de las necesidades de un público determinado, como el académico[cite: 2].</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-4">
+        <h2 class="concept-title">1.4. Propiedades ACID.</h2>
+        <div class="concept-body">
+          <p class="sub-heading">Atomicidad</p>
+          <p>En el contexto de las propiedades ACID de una base de datos, la atomicidad significa que[cite: 2]:</p>
+          <ul>
+            <li>Comprométase a que se realice la totalidad de la transacción[cite: 2].</li>
+            <li>No he realizado ninguna transacción[cite: 2].</li>
+          </ul>
+          <p>En esencia, una transacción atómica garantiza que cualquier confirmación que realices finalice la operación por completo[cite: 2]. En caso de que se pierda la conexión durante una operación, la base de datos se revierte al estado anterior al inicio de la confirmación[cite: 2].</p>
+          <p>Esto es importante para evitar que fallos o interrupciones provoquen que la transacción quede parcialmente terminada y con un estado general desconocido[cite: 2]. Si se produce un fallo durante una transacción sin atomicidad, no se puede saber con exactitud en qué punto se encontraba el proceso antes de la interrupción[cite: 2]. Mediante el principio de transacciones atómicas, se garantiza que la transacción se complete con éxito en su totalidad o que no se complete en absoluto[cite: 2].</p>
+
+          <p class="sub-heading">Consistencia</p>
+          <p>En la gestión de bases de datos ACID, la consistencia se refiere al mantenimiento de las restricciones de integridad de los datos[cite: 2].</p>
+          <p>Una transacción consistente no violará las restricciones de integridad impuestas a los datos por las reglas de la base de datos[cite: 2]. Garantizar la consistencia asegura que, si una base de datos entra en un estado no válido (si se produce una violación de las restricciones de integridad de los datos), el proceso se abortará y los cambios se revertirán a su estado legal anterior[cite: 2].</p>
+          <p>Otra forma de garantizar la coherencia dentro de una base de datos a lo largo de cada transacción es aplicando también restricciones declarativas a la base de datos[cite: 2].</p>
+          <p>Un ejemplo de restricción declarativa podría ser que todas las cuentas de clientes tengan un saldo positivo[cite: 2]. Si una transacción provocara un saldo negativo en la cuenta de un cliente, dicha transacción se revertiría[cite: 2]. Esto garantiza que los cambios mantengan la integridad de los datos o, de lo contrario, se cancelen por completo[cite: 2].</p>
+
+          <p class="sub-heading">Aislamiento</p>
+          <p>Las transacciones aisladas se consideran "serializables", lo que significa que cada transacción ACID se produce en un orden distinto sin que se produzcan transacciones simultáneas[cite: 2].</p>
+          <p>Las operaciones de lectura o escritura en la base de datos no se verán afectadas por otras operaciones de lectura y escritura de transacciones independientes que se realicen en la misma base de datos[cite: 2]. Se crea un orden global, donde cada transacción se coloca en cola para garantizar que se completen por completo antes de que comience otra[cite: 2].</p>
+          <p>Es importante destacar que esto no significa que no puedan realizarse dos operaciones simultáneamente[cite: 2]. Se pueden realizar varias transacciones siempre y cuando no exista posibilidad de que afecten a las demás transacciones que se estén produciendo al mismo tiempo[cite: 2].</p>
+          <p>Esto puede afectar la velocidad de las transacciones, ya que puede obligar a muchas operaciones a esperar antes de iniciarse[cite: 2]. Sin embargo, esta desventaja se compensa con la mayor seguridad de datos que proporciona el aislamiento[cite: 2].</p>
+          <p>En una base de datos ACID, el aislamiento se puede lograr mediante el uso de una escala gradual de permisividad que va desde las llamadas transacciones optimistas hasta las transacciones pesimistas[cite: 2]:</p>
+          <ul>
+            <li>Un esquema de transacciones optimista asume que otras transacciones se completarán sin leer ni escribir en el mismo lugar dos veces[cite: 2]. Con este esquema, ambas transacciones se abortarán y se volverán a intentar en caso de que una transacción acceda al mismo lugar dos veces[cite: 2].</li>
+            <li>Un esquema de transacciones pesimista ofrece menos libertad y bloquea recursos, asumiendo que las transacciones afectarán a otras[cite: 2]. Esto reduce los abortos y los reintentos, pero también implica que las transacciones deben esperar su turno con mayor frecuencia que con el enfoque optimista[cite: 2].</li>
+          </ul>
+          <p>A menudo, encontrar el punto medio entre estos dos ideales es donde se obtiene el mejor resultado general[cite: 2].</p>
+
+          <p class="sub-heading">Durabilidad</p>
+          <p>El último aspecto del enfoque ACID para la gestión de bases de datos es la durabilidad[cite: 2].</p>
+          <p>La durabilidad garantiza que los cambios realizados en la base de datos (transacciones) que se confirmen correctamente se conservarán de forma permanente, incluso en caso de fallos del sistema[cite: 2]. Esto garantiza que los datos de la base de datos no se corromperán por[cite: 2]:</p>
+          <ul>
+            <li>Interrupciones del servicio[cite: 2]</li>
+            <li>Accidentes[cite: 2]</li>
+            <li>Otros casos de fallo[cite: 2]</li>
+          </ul>
+          <p>La durabilidad se logra mediante el uso de registros de cambios a los que se hace referencia cuando se reinician las bases de datos (o partes de la base de datos)[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-5">
+        <h2 class="concept-title">1.5. Diseño de bases de datos.</h2>
+        <div class="concept-body">
+          <p>Al diseñar una base de datos, está modelando un sistema empresarial real que contiene un conjunto de entidades y sus características, o atributos, y las reglas o relaciones entre dichas entidades[cite: 2].</p>
+          <p>Hay tres tipos de relaciones entre las entidades de una base de datos[cite: 2]:</p>
+          <ul>
+            <li><strong>Una-to-one relación:</strong> En este tipo de relación, cada instancia de una entidad se relaciona sólo con una instancia de otra entidad[cite: 2]. En la situación descrita anteriormente no existe actualmente ninguna-to-one relación[cite: 2].</li>
+            <li><strong>Una-to-many relación:</strong> En este tipo de relación, cada instancia de una entidad se relaciona con una o más instancias de otra entidad[cite: 2]. Por ejemplo, un autor podría haber escrito varios libros, pero ciertos libros sólo tienen un autor[cite: 2]. Este es el tipo más común de relación modelada en bases de datos relacionales[cite: 2].</li>
+            <li><strong>Muchas-to-many relaciones:</strong> En este tipo de relación, muchas instancias de una entidad determinada se relacionan con una o más instancias de otra entidad[cite: 2]. Por ejemplo, podríamos-authors escribir varios libros[cite: 2].</li>
+          </ul>
+          <p>El diseño de base de datos es una tarea más compleja de lo que se indica aquí, y hay muchos elementos que se debe tener en cuenta, como requisitos de espacio, claves, índices, restricciones, seguridad y autorización, etc[cite: 2].</p>
+
+          <p class="sub-heading">1.5.1. Diseño conceptual</p>
+          <p>El diseño conceptual es la segunda etapa en el proceso de diseño e implementación de una base de datos, y sigue a la etapa inicial de recopilación y análisis de requisitos[cite: 2]. El objetivo del diseño conceptual es crear un esquema conceptual para la base de datos mediante un modelo de datos conceptual de alto nivel e independiente de la tecnología a partir del análisis de requisitos[cite: 2].</p>
+          <p>La etapa de diseño conceptual parte de la recopilación y el análisis de requisitos obtenido en la etapa previa con la ayuda de los futuros usuarios de la base de datos, y tiene como objetivo conseguir un esquema conceptual de la base de datos que sea consistente con los requisitos y las restricciones impuestas por los problemas que hay que resolver[cite: 2].</p>
+          <p>Hay diferentes lenguajes para representar modelos conceptuales de datos[cite: 2]. Algunas características importantes para representar modelos conceptuales de datos son estas[cite: 2]:</p>
+          <ul>
+            <li><strong>Expresividad:</strong> el modelo debe ser suficientemente expresivo para permitir representar los diferentes conceptos del mundo real y las asociaciones entre estos conceptos[cite: 2].</li>
+            <li><strong>Simplicidad:</strong> el modelo debe ser simple[cite: 2]. Ha de permitir a los usuarios de la base de datos entender los conceptos que se expresan[cite: 2].</li>
+            <li><strong>Representación diagramática:</strong> el modelo debe utilizar una notación diagramática fácil de entender y útil para visualizar el esquema conceptual[cite: 2].</li>
+            <li><strong>Formalidad:</strong> la representación del modelo debe ser precisa, formal y no puede presentar ambigüedades[cite: 2].</li>
+          </ul>
+
+          <p class="sub-heading">1.5.2. Diseño lógico</p>
+          <p>El diseño lógico de bases de datos es la tercera etapa en el proceso de creación de una base de datos[cite: 2]. Se encarga de traducir la estructura abstracta obtenida en el diseño conceptual (por ejemplo, un diagrama Entidad-Relación) en un esquema organizado bajo las reglas de un modelo de datos específico (siendo el modelo relacional el más utilizado en la actualidad)[cite: 2]. A diferencia de la fase anterior, este diseño ya depende del paradigma tecnológico elegido (tablas, columnas, restricciones), pero permanece completamente independiente del hardware, del espacio en disco o del servidor físico donde se instalará[cite: 2].</p>
+          <p>El objetivo central de esta fase es estructurar la información de la manera más limpia y eficiente posible[cite: 2]. Esto se logra mediante tareas clave como la transformación de entidades del mundo real en tablas, la especificación de tipos de datos lógicos para cada campo (números, texto, fechas), y la rigurosa definición de claves primarias (para identificar registros únicos) y claves foráneas (para amarrar y conectar unas tablas con otras)[cite: 2]. Además, se aplica el proceso de normalización matemática (por lo general hasta la Tercera Forma Normal) para erradicar cualquier duplicidad de datos y prevenir errores al momento de insertar, actualizar o eliminar registros en el futuro[cite: 2].</p>
+
+          <p class="sub-heading">1.5.3. Diseño físico</p>
+          <p>Conceptualmente, podemos definir el diseño físico de una base de datos como un proceso que, a partir de su diseño lógico y de información sobre su uso esperado, creará una configuración física de la base de datos adaptada al entorno donde se alojará y que permita el almacenamiento y la explotación de los datos de la base de datos con un rendimiento adecuado[cite: 2].</p>
+          <ul>
+            <li><strong>a) Entradas:</strong> el diseño físico parte de la siguiente información[cite: 2]:
+              <ul>
+                <li>El esquema lógico: es el resultado del diseño lógico de la base de datos y contiene la lista de tablas necesarias para almacenar la información relevante, incluyendo al menos, sus columnas, claves primarias y foráneas[cite: 2].</li>
+                <li>Información sobre el uso esperado de la base de datos: estimación sobre los volúmenes de datos y transacciones que el sistema deberá procesar[cite: 2]. También deberá contener una estimación sobre las operaciones SQL que se utilizarán, sobre qué datos, con qué frecuencia, y la calidad de servicio esperada[cite: 2].</li>
+              </ul>
+            </li>
+            <li><strong>b) Salida:</strong> se tomará un conjunto de decisiones sobre las estructuras físicas más adecuadas a utilizar, generando una configuración física de la base de datos[cite: 2]. Esta configuración podrá estar compuesta por una combinación adecuada de los espacios de almacenaje, un conjunto de índices para mejorar el rendimiento de las consultas, un particionamiento de tablas adecuado, un conjunto de vistas materializadas y otros elementos adicionales, como por ejemplo disparadores que regulen reglas de negocio complejas o procedimientos almacenados en la base de datos[cite: 2].</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-6">
+        <h2 class="concept-title">1.6. Arquitectura de los tres niveles de base de datos.</h2>
+        <div class="concept-body">
+          <p class="sub-heading">Nivel de presentación</p>
+          <p>El nivel de presentación es la interfaz de usuario y la capa de comunicación de la aplicación, donde el usuario final interactúa con la aplicación[cite: 2]. Su objetivo principal es mostrar información y recopilar información del usuario[cite: 2]. Este nivel superior puede ejecutarse en un navegador web, como aplicación de escritorio o una interfaz gráfica de usuario (GUI), por ejemplo[cite: 2]. Los niveles de presentación web se desarrollan mediante HTML, CSS y JavaScript[cite: 2]. Las aplicaciones de escritorio se pueden escribir en varios idiomas dependiendo de la plataforma[cite: 2].</p>
+
+          <p class="sub-heading">Nivel de aplicación</p>
+          <p>El nivel de aplicación, también conocido como nivel lógico o nivel intermedio, es el corazón de la aplicación[cite: 2]. En este nivel, la información que se recopila en el nivel de presentación se procesa, a veces en comparación con otra información en el nivel de datos, utilizando la lógica del negocio, un conjunto específico de business rules[cite: 2]. El nivel de aplicación también puede agregar, eliminar o modificar datos en el nivel de datos[cite: 2].</p>
+          <p>El nivel de aplicación suele desarrollarse mediante Python, Java, Perl, PHP o Ruby, y se comunica con el nivel de datos mediante llamadas a la API[cite: 2].</p>
+
+          <p class="sub-heading">Nivel de datos</p>
+          <p>El nivel de datos, a veces llamado nivel de base de datos, nivel de acceso a datos o back-end, es donde se almacena y gestiona la información procesada por la aplicación[cite: 2]. Puede tratarse de un sistema de gestión de bases de datos relacionales como PostgreSQL, MySQL, MariaDB, Oracle, Db2, Informix o Microsoft SQL Server, o de un servidor de bases de datos NoSQL como Cassandra, CouchDB o MongoDB[cite: 2].</p>
+          <p>En una aplicación de tres niveles, todas las comunicaciones pasan por el nivel de aplicación[cite: 2]. El nivel de presentación y el nivel de datos no pueden comunicarse directamente entre sí[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-7">
+        <h2 class="concept-title">1.7. Sistemas Gestores de Bases de Datos y estructura general de un Sistema de Base de Datos.</h2>
+        <div class="concept-body">
+          <p>Un Sistema Gestor de Bases de Datos es un conjunto de programas de software que actúan como interfaz entre la base de datos física, los usuarios y las aplicaciones[cite: 2]. Sus funciones principales incluyen la definición de estructuras mediante un lenguaje DDL, la manipulación de registros a través de sentencias DML o consultas SQL, el resguardo de la seguridad e integridad referencial, el control de concurrencia para accesos simultáneos y los mecanismos de respaldo ante fallos de hardware[cite: 2].</p>
+          <p>La estructura general de un sistema de base de datos se organiza mediante tres niveles de abstracción según el modelo ANSI-SPARC: el nivel externo que corresponde a las vistas de los usuarios, el nivel conceptual que describe las tablas y relaciones del diseño lógico, y el nivel interno que define la configuración física, los espacios de almacenamiento y los índices en los dispositivos no volátiles[cite: 2]. Internamente, el motor del software se divide en un procesador de consultas, encargado de compilar y optimizar las peticiones lógicas, y un gestor de almacenamiento, responsable de interactuar con el sistema operativo para la paginación de datos, la gestión de transacciones y el control de la memoria caché[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-8">
+        <h2 class="concept-title">1.8. Sistemas Gestores Actuales.</h2>
+        <div class="concept-body">
+          <p>Entre los sistemas relacionales más utilizados se encuentran MySQL, un gestor multihilo y multiusuario ideal para software libre y entornos web, y MariaDB, una derivación de código abierto totalmente compatible con el primero[cite: 2]. También destacan SQLite, que funciona como una biblioteca ligera y portable sin necesidad de servidor, y PostgreSQL, un sistema libre orientado a objetos ideal para grandes volúmenes de datos[cite: 2]. En el ámbito comercial se ubican Microsoft SQL Server, una alternativa propietaria basada en Transact-SQL, y Oracle, reconocido tradicionalmente en el mundo empresarial por su alta estabilidad y robustez[cite: 2]. Por el lado de los sistemas no relacionales, los más populares son MongoDB, enfocado en el almacenamiento de ficheros con estructuras BSON, junto con Redis y Cassandra, los cuales utilizan un almacenamiento de tipo clave-valor optimizado para escalabilidad horizontal y gestión de memoria caché[cite: 2].</p>
+
+          <p class="sub-heading">1.8.1 Relacionales</p>
+          <p>Una base de datos relacional es un tipo de base de datos que almacena y proporciona acceso a puntos de datos relacionados entre sí[cite: 2]. Las bases de datos relacionales se basan en el modelo relacional, una forma intuitiva y directa de representar datos en tablas[cite: 2]. En una base de datos relacional, cada fila en una tabla es un registro con una ID única, llamada clave[cite: 2]. Las columnas de la tabla contienen los atributos de los datos y cada registro suele tener un valor para cada atributo, lo que simplifica la creación de relaciones entre los puntos de datos[cite: 2].</p>
+          <p>El modelo relacional significa que las estructuras de datos lógicas (las tablas de datos, las vistas y los índices) están separadas de las estructuras de almacenamiento físicas[cite: 2]. Gracias a esta separación, los administradores de bases de datos pueden gestionar el almacenamiento físico de datos sin que eso influya en el acceso a esos datos como estructura lógica[cite: 2]. Por ejemplo, si se cambia el nombre del archivo de una base de datos, eso no significa que vayan a cambiar también los nombres de sus tablas[cite: 2].</p>
+          <p>La distinción entre lógico y físico se aplica también a las operaciones de base de datos, que son acciones claramente definidas que permiten a las aplicaciones manipular los datos y las estructuras de la base de datos[cite: 2]. Con las operaciones lógicas, las aplicaciones pueden especificar el contenido que necesitan, mientras que las operaciones físicas determinan cómo se debe acceder a esos datos y llevan a cabo la tarea[cite: 2].</p>
+          <p>Para garantizar la precisión y accesibilidad continua de los datos, las bases de datos relacionales siguen ciertas reglas de integridad[cite: 2]. Por ejemplo, una regla de integridad podría especificar que no se permite duplicar filas en una tabla, a fin de evitar que se introduzca información errónea en la base de datos[cite: 2].</p>
+          <p>El modelo de datos relacional proporcionó una forma estándar de representar y consultar datos que podría utilizar cualquier aplicación[cite: 2]. Desde el principio, los desarrolladores se dieron cuenta de que la virtud principal del modelo de base de datos relacional era el uso de tablas, ya que era una forma intuitiva, eficiente y flexible de almacenar y acceder a información estructurada[cite: 2].</p>
+          <p>Con el tiempo, los desarrolladores comenzaron a usar el lenguaje de consulta estructurado (SQL) para escribir y hacer consultas en una base de datos: esto sería otra de las grandes virtudes de este modelo[cite: 2]. Durante muchos años, el SQL se ha utilizado como el lenguaje para realizar consultas en bases de datos[cite: 2]. Se basa en el álgebra relacional y proporciona un lenguaje matemático de uniformidad interna que facilita la mejora del rendimiento de todas las consultas en bases de datos[cite: 2]. Otros métodos empleados necesitan definir consultas individuales[cite: 2].</p>
+
+          <p class="sub-heading">1.8.2 No relacionales</p>
+          <p>Las bases de datos no relacionales o NoSQL son sistemas que se ocupan del almacenamiento de datos de una forma no tabulada y suelen ser más flexibles que las bases de datos tradicionales[cite: 2]. Este tipo de bases de datos no almacenan la información en filas con campos ni trabajan con estructuras definidas, sino que gestionan grandes cantidades de datos semiestructurados o no estructurados mediante cuatro tipos principales: orientadas a columnas, orientadas a documentos, orientadas a clave-valor y orientadas a grafos[cite: 2].</p>
+          <p>Entre sus características destacan que almacenan la información en documentos, grafos o claves-valor en lugar de tablas relacionales, y están preparadas para recoger grandes cantidades de datos semiestructurados y no estructurados con un alto grado de escalabilidad horizontal[cite: 2]. Asimismo, carecen de un sistema estandarizado, dependiendo de sus propias aplicaciones de gestión, y se distinguen de las bases de datos relacionales en que algunas pueden usar el lenguaje SQL como apoyo sin admitir JOINs, además de no cumplir estrictamente con las cualidades ACID de atomicidad, consistencia, integridad y durabilidad[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-1-9">
+        <h2 class="concept-title">1.9. Panorama de los modelos de datos.</h2>
+        <div class="concept-body">
+          <p>El panorama de los modelos de datos[cite: 2]. Un modelo de datos es, esencialmente, la estructura lógica y matemática que define cómo se organizan, almacenan y manipulan los datos dentro de un sistema de bases de datos[cite: 2].</p>
+          <p>Históricamente, el panorama comenzó con los modelos jerárquicos (estructuras en árbol) y de red (estructuras de grafos complejos), los cuales eran eficientes pero sumamente rígidos y difíciles de modificar[cite: 2]. En la década de 1970, el modelo relacional revolucionó la industria al introducir el concepto de tablas interconectadas mediante llaves primarias y foráneas, basándose en el álgebra relacional y utilizando el lenguaje SQL[cite: 2]. Este modelo se convirtió en el estándar absoluto debido a su consistencia, su estructura rígida basada en esquemas definidos y el estricto cumplimiento de las propiedades ACID (atomicidad, consistencia, aislamiento y durabilidad), ideales para sistemas financieros y transaccionales tradicionales[cite: 2].</p>
+          <p>Con la llegada de la Web 2.0 y el Big Data, el panorama se expandió hacia los modelos no relacionales o NoSQL para dar respuesta a la necesidad de almacenar volúmenes masivos de datos no estructurados o semiestructurados (como archivos de texto, videos, imágenes y redes sociales) que el modelo relacional no podía procesar de manera eficiente[cite: 2]. Esto consolidó cuatro grandes submodelos: el orientado a documentos (que almacena datos en formatos como JSON o BSON, ideal para desarrollo web ágil), el orientado a clave-valor (estructuras ultra rápidas basadas en diccionarios para sistemas de caché), el orientado a columnas (diseñado para analítica masiva y consultas agregadas sobre Big Data) y el orientado a grafos (enfocado en representar relaciones complejas y conexiones directas, como en mapas o redes sociales)[cite: 2]. Estos modelos priorizan la escalabilidad horizontal y la flexibilidad sobre la rigidez de un esquema predefinido[cite: 2].</p>
+          <p>En la actualidad, el panorama se mueve con fuerza hacia las bases de datos multimodelo y los sistemas NewSQL[cite: 2]. Las bases de datos multimodelo permiten a las aplicaciones utilizar diferentes estructuras de datos (como tablas relacionales, documentos y grafos) dentro de un mismo motor de base de datos unificado[cite: 2]. Por otro lado, los sistemas NewSQL buscan unificar lo mejor de ambos mundos: ofrecen la escalabilidad horizontal masiva y el rendimiento de los sistemas NoSQL, pero manteniendo la consistencia estricta, las garantías ACID y el uso del lenguaje SQL tradicional de los sistemas relacionales[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-1">
+        <h2 class="concept-title">2.1 Definición de modelo de datos.</h2>
+        <div class="concept-body">
+          <p>El modelado de datos es el proceso de crear una representación visual de todo un sistema de información o partes de él para comunicar conexiones entre puntos de datos y estructuras[cite: 2].</p>
+          <p>El objetivo del modelado de datos es ilustrar los tipos de datos utilizados y almacenados dentro del sistema y las relaciones entre estos tipos de datos[cite: 2]. También describe las formas en que se pueden agrupar y organizar los datos, junto con sus formatos y atributos[cite: 2].</p>
+          <p>Los modelos de datos se crean en función de las necesidades empresariales[cite: 2]. Las reglas y los requisitos se definen por adelantado a través de la retroalimentación de los stakeholders de la empresa para que puedan incorporarse al diseño de un nuevo sistema o adaptarse en la iteración de uno existente[cite: 2].</p>
+          <p>Los datos se pueden modelar en varios niveles de abstracción[cite: 2]. El proceso comienza con la recopilación de información sobre los requisitos comerciales de los stakeholders y los usuarios finales[cite: 2]. Estas business rules se traducen luego en estructuras de datos para formular un diseño de base de datos concreto[cite: 2]. Un modelo de datos puede compararse con una hoja de ruta, un proyecto técnico o cualquier diagrama formal que facilite una comprensión más profunda de lo que se está diseñando[cite: 2].</p>
+          <p>El modelado de datos utiliza esquemas estandarizados y técnicas formales[cite: 2]. Este enfoque proporciona una forma común, coherente y predecible de definir y gestionar los recursos de datos en toda una organización, o incluso más allá[cite: 2].</p>
+          <p>Idealmente, los modelos de datos son documentos vivos que evolucionan junto con las cambiantes necesidades del negocio[cite: 2]. Desempeñan un papel importante en el soporte de los procesos del negocio y en la planificación de la arquitectura y estrategia de TI[cite: 2]. Los modelos de datos se pueden compartir con proveedores, socios o colegas de la industria[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-2">
+        <h2 class="concept-title">2.2 Modelo entidad relación.</h2>
+        <div class="concept-body">
+          <p>El modelo entidad relación (ERD o modelos ER) es una herramienta que permite representar de manera simplificada cómo personas, objetos o conceptos se relacionan entre sí[cite: 2]. Se utiliza para exponer cómo se organiza la información en una base de datos[cite: 2].</p>
+          <p>El modelo entidad relación incluye tres elementos básicos[cite: 2]:</p>
+          <ul>
+            <li><strong>Entidades:</strong> son las personas, objetos o conceptos de los que trata una base de datos[cite: 2]. Por ejemplo, en una base de datos de ventas de un negocio, las entidades podrían ser, entre otras, “Cliente”, “Producto”, “Factura” o “Dirección”[cite: 2].</li>
+            <li><strong>Atributos:</strong> describen las propiedades que posee cada entidad[cite: 2]. En el ejemplo anterior, atributos de la entidad “Cliente” podrían ser “Nombre”, “Primer Apellido”, “Fecha de nacimiento”, etc[cite: 2].</li>
+            <li><strong>Relaciones:</strong> sirven para crear vínculos entre parejas de entidades[cite: 2]. Siguiendo con el ejemplo, cada “Cliente” está vinculado a una “Dirección”, a uno o varios “Productos”, etc[cite: 2].</li>
+          </ul>
+          <p>El diagrama entidad-relación corresponde a la expresión gráfica del modelo entidad relación[cite: 2]. Para ello, se utilizan símbolos[cite: 2]:</p>
+          <ul>
+            <li>Rectángulos, para representar las entidades[cite: 2].</li>
+            <li>Óvalos, para los atributos[cite: 2].</li>
+            <li>Diamantes o líneas de conexión para representar las relaciones entre entidades y atributos[cite: 2].</li>
+          </ul>
+          <p>Las líneas de conexión suelen tener una apariencia gráfica diferente en función del tipo de relación que exista entre las entidades que conectan (puede ser una línea continua o discontinua, por ejemplo)[cite: 2].</p>
+          <p>El modelo entidad relación pretende ser un reflejo de la estructura gramatical y, por ello, utilizan[cite: 2]:</p>
+          <ul>
+            <li>Sustantivos, comunes o propios, para definir tipos de entidades y entidades[cite: 2].</li>
+            <li>Verbos, para definir tipos de relación[cite: 2].</li>
+            <li>Adjetivos, como atributos de una entidad[cite: 2].</li>
+            <li>Adverbios, como atributos de una relación[cite: 2].</li>
+          </ul>
+          <p>Los modelos ER se emplean para diseñar bases de datos en múltiples campos, como los sistemas de información empresarial, los procesos de negocio, la investigación, la educación o la ingeniería de software[cite: 2]. En concreto[cite: 2]:</p>
+          <ul>
+            <li><strong>Diseño de bases de datos:</strong> los diagramas entidad-relación se emplean para diseñar bases de datos relacionales[cite: 2]. En ingeniería de software este suele ser el primer paso para concretar los requisitos de un proyecto de sistemas de información[cite: 2].</li>
+            <li><strong>Depuración de errores de bases de datos:</strong> el modelo ER permite analizar bases de datos existentes con el fin de encontrar problemas de lógica o implementación[cite: 2].</li>
+            <li><strong>Sistemas de información empresarial:</strong> se recurre a modelos ERD para diseñar bases de datos relacionales para un proceso de negocio que permitan simplificar el proceso y mejorar sus resultados[cite: 2].</li>
+            <li><strong>Reingeniería de procesos de negocio:</strong> el modelo entidad relación también contribuye a analizar bases de datos que se emplean para rediseñar y optimizar un procesos de negocio[cite: 2].</li>
+            <li><strong>Investigación:</strong> los modelos ER pueden ser útiles para analizar datos estructurados que se emplean en investigaciones[cite: 2].</li>
+            <li><strong>Educación:</strong> un diagrama entidad-relación sirve para planificar bases de datos de información con propósitos educativos[cite: 2].</li>
+          </ul>
+          <p>El modelo entidad relación es, básicamente, el esquema que se emplea para ilustrar las relaciones que se establecen en una base de datos[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-2-1">
+        <h2 class="concept-title">2.2.1 Entidades, atributos y relaciones.</h2>
+        <div class="concept-body">
+          <p><strong>Entidad:</strong> Objeto exclusivo único en el mundo real que se está controlando[cite: 2]. Algunos ejemplos de entidad son una sola persona, un solo producto o una sola organización[cite: 2].</p>
+          <p><strong>Tipo de entidad:</strong> Persona, organización, tipo de objeto o concepto sobre los que se almacena información[cite: 2]. Describe el tipo de la información que se está controlando[cite: 2]. Normalmente un tipo de entidad corresponde a una o varias tablas relacionadas en la base de datos[cite: 2].</p>
+          <p><strong>Atributo:</strong> Característica o rasgo de un tipo de entidad que describe la entidad, por ejemplo, el tipo de entidad Person (Persona) tiene el atributo Date of Birth (Fecha de nacimiento)[cite: 2].</p>
+          <p><strong>Registro:</strong> Representación del almacenamiento de una fila de datos[cite: 2].</p>
+          <p><strong>Registro de miembro:</strong> Representación de la entidad tal como se almacena en los sistemas de origen individuales[cite: 2]. La información de cada registro de miembro se almacena como un registro único o un grupo de registros en tablas de base de datos relacionadas[cite: 2].</p>
+          <p>Otros términos relacionados son los siguientes[cite: 2]:</p>
+          <ul>
+            <li>Registro de oro: principalmente para uso general, no técnico[cite: 2]</li>
+            <li>Registro agregado: uso especifico en MDM de tipo físico[cite: 2]</li>
+            <li>Parte: uso específico en MDM de tipo físico[cite: 2]</li>
+            <li>Diversos ID: ID de entidad, ID de registro, ID de cuenta e ID de producto[cite: 2]</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-2-2">
+        <h2 class="concept-title">2.2.2 Llaves.</h2>
+        <div class="concept-body">
+          <p>La llave primaria es un atributo o conjunto de atributos que identifica de manera única cada registro en una tabla[cite: 2]. Su importancia radica en su capacidad para garantizar que no existan duplicados en la información almacenada[cite: 2]. Imagina una tabla que almacena datos de empleados; la llave primaria podría ser el número de identificación del empleado, asegurando que cada número sea único y, por ende, represente a un empleado específico[cite: 2].</p>
+          <p>Al definir una llave primaria, se establece una restricción única, lo que impide la inserción de registros duplicados[cite: 2]. Esto no solo mejora la calidad de los datos, sino que también facilita la búsqueda y recuperación de información de manera eficiente[cite: 2]. Además, la llave primaria es crucial para establecer relaciones con otras tablas mediante el uso de llaves foráneas[cite: 2].</p>
+          <p>La llave foránea, por otro lado, crea vínculos entre tablas relacionadas en una base de datos[cite: 2]. Esta llave foránea suele ser un atributo en una tabla que coincide con la llave primaria de otra tabla[cite: 2]. Este enlace establece una relación referencial, lo que permite que la información se distribuya y relacione de manera coherente[cite: 2].</p>
+          <p>Para comprender mejor la función de la llave foránea, consideremos dos tablas: «Clientes» y «Órdenes»[cite: 2]. En la tabla «Órdenes», la llave primaria podría ser el número de orden, mientras que en la tabla «Clientes», el número de cliente podría ser la llave primaria[cite: 2]. Al introducir una llave foránea en la tabla «Órdenes» que hace referencia al número de cliente en la tabla «Clientes», se establece una conexión significativa entre ambas tablas[cite: 2]. Esta relación facilita consultas que implican la combinación de datos de ambas tablas, brindando información más completa y detallada[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-2-3">
+        <h2 class="concept-title">2.2.3 Cardinalidad de las entidades en una relación.</h2>
+        <div class="concept-body">
+          <p>La cardinalidad se refiere al número de valores únicos en una columna de una tabla relacional en relación con el número total de filas de la tabla[cite: 2]. La cardinalidad de una columna se evalúa y almacena en las tablas del sistema para su uso por parte del optimizador cuando el administrador de la base de datos (DBA) ejecuta las estadísticas[cite: 2].</p>
+          <p>La cardinalidad de una columna es muy importante para los diseñadores de bases de datos y para el optimizador de consultas de bases de datos[cite: 2]. Para el diseñador o el administrador de bases de datos, saber que una columna repite principalmente valores le indica que es un mal candidato para un índice, ya que no será muy selectivo[cite: 2]. Para un optimizador de consultas basado en costes, la selectividad de un índice potencial dicta si se utilizará o se ignorará[cite: 2]. Crear y mantener índices es caro en términos de uso de recursos de procesador y de E/S, por lo que los diseñadores y desarrolladores deben asegurarse de crear índices que se utilicen[cite: 2].</p>
+          <p>Los diseñadores de bases de datos establecen el grado de relación entre las entidades[cite: 2]. Una entidad puede tener una relación de uno a muchos o de uno a uno con otra entidad[cite: 2]. Por ejemplo, un contenedor de almacenamiento puede tener una tapa, lo que constituye una relación uno a uno[cite: 2]. Un médico puede tener muchos pacientes, formando una relación de uno a muchos[cite: 2]. Esto se conoce como cardinalidad de la relación[cite: 2].</p>
+          <p>La cardinalidad de los datos se refiere a la unicidad de los valores contenidos en una columna de la base de datos[cite: 2]. Si la mayoría de los valores son distintos, se considera que tiene una cardinalidad alta[cite: 2]. Si la columna contiene sobre todo valores repetidos, se trata de una columna de cardinalidad baja[cite: 2].</p>
+          <p>Cuando se particiona una tabla basándose en rangos de valores de datos, una cardinalidad baja puede provocar un sesgo de los datos, lo que resulta en una distribución de los datos desigual entre las particiones[cite: 2]. Esto no es bueno porque se quiere equilibrar el uso de recursos en todos los procesadores disponibles, no sólo en un subconjunto[cite: 2].</p>
+          <p>Una columna llena de valores distintos se denomina columna de cardinalidad alta[cite: 2]. Un número bajo de valores distintos en una columna la convierte en una columna de cardinalidad baja[cite: 2]. Cuando se selecciona una columna para indexarla o utilizarla como base para una clave de partición, se buscan candidatos de alta cardinalidad[cite: 2]. Del mismo modo, un plan de consulta de base de datos utilizará un índice disponible si una columna contiene valores distintos[cite: 2].</p>
+          <p>En términos de ajuste del rendimiento de la base de datos, una columna de baja cardinalidad puede dar lugar a una operación de escaneo completo de la tabla, que es la forma más cara (en términos de uso de recursos) de consultar una tabla[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-2-4">
+        <h2 class="concept-title">2.2.4 Dependencia de existencia y de identificación.</h2>
+        <div class="concept-body">
+          <p>La dependencia de existencia ocurre cuando una entidad denominada débil no puede existir en la base de datos si desaparece la entidad fuerte de la cual depende, lo que implica que la eliminación del registro principal borra automáticamente sus registros subordinados en cascada, aunque la entidad débil conserve una clave primaria propia e independiente para sus registros[cite: 2]. Por su parte, la dependencia de identificación representa un nivel de subordinación más estricto donde la entidad débil carece de la capacidad de identificarse de forma única por sus propios atributos, viéndose obligada a construir su clave primaria mediante la combinación de la clave primaria de la entidad fuerte junto con un atributo propio llamado discriminante[cite: 2]. En el modelado de datos, toda entidad con dependencia de identificación posee inherentemente una dependencia de existencia, pero una entidad con dependencia de existencia no siempre requiere una dependencia de identificación para ser reconocida en el sistema[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-3">
+        <h2 class="concept-title">2.3 Diseño de modelos de datos ER.</h2>
+        <div class="concept-body">
+          <p>El objetivo del modelado de datos es ilustrar los tipos de datos utilizados y almacenados dentro del sistema y las relaciones entre estos tipos de datos[cite: 2]. También describe las formas en que se pueden agrupar y organizar los datos, junto con sus formatos y atributos[cite: 2].</p>
+          <p>Los modelos de datos se crean en función de las necesidades empresariales[cite: 2]. Las reglas y los requisitos se definen por adelantado a través de la retroalimentación de los stakeholders de la empresa para que puedan incorporarse al diseño de un nuevo sistema o adaptarse en la iteración de uno existente[cite: 2].</p>
+          <p>Los datos se pueden modelar en varios niveles de abstracción[cite: 2]. El proceso comienza con la recopilación de información sobre los requisitos comerciales de los stakeholders y los usuarios finales[cite: 2]. Estas business rules se traducen luego en estructuras de datos para formular un diseño de base de datos concreto[cite: 2]. Un modelo de datos puede compararse con una hoja de ruta, un proyecto técnico o cualquier diagrama formal que facilite una comprensión más profunda de lo que se está diseñando[cite: 2].</p>
+          <p>El modelado de datos utiliza esquemas estandarizados y técnicas formales[cite: 2]. Este enfoque proporciona una forma común, coherente y predecible de definir y gestionar los recursos de datos en toda una organización, o incluso más allá[cite: 2].</p>
+
+          <p>Idealmente, los modelos de datos son documentos vivos que evolucionan junto con las cambiantes necesidades del negocio[cite: 2]. Desempeñan un papel importante en el soporte de los procesos del negocio y en la planificación de la arquitectura y estrategia de TI[cite: 2]. Los modelos de datos se pueden compartir con proveedores, socios o colegas de la industria[cite: 2].</p>
+        </div>
+      </div>
+
+      <div class="concept-card" id="tema-2-4">
+        <h2 class="concept-title">2.4 El Diccionario de Datos.</h2>
+        <div class="concept-body">
+          <p>Un diccionario de datos es un recurso centralizado que define y describe la estructura, el contenido y el significado de los datos de un sistema o base de datos[cite: 2]. Actúa como una guía de referencia que documenta metadatos clave sobre conjuntos de datos, como nombres de campos, tipos de datos, valores permitidos y relaciones entre elementos[cite: 2]. El objetivo principal de un diccionario de datos es garantizar la coherencia y la claridad en la forma de interpretar, compartir y utilizar los datos en los distintos equipos[cite: 2].</p>
+          <p>A medida que las organizaciones crecen y adoptan arquitecturas de datos más complejas, un diccionario de datos se convierte en una herramienta esencial para reducir la confusión, mejorar la comunicación y respaldar los esfuerzos de calidad de los datos[cite: 2]. Juntas, estas herramientas favorecen la coherencia, la transparencia y la colaboración eficaz entre los equipos de datos y de negocio[cite: 2].</p>
+          <p>Sin definiciones y documentación estandarizadas, los equipos pueden malinterpretar los campos de datos, aplicar suposiciones incorrectas o duplicar esfuerzos[cite: 2]. Un diccionario de datos proporciona una única fuente de verdad que promueve la alineación entre departamentos y sistemas[cite: 2]. Esta coherencia ayuda a evitar errores costosos en la elaboración de informes, análisis y trabajos de integración[cite: 2].</p>
+          <p>Entre las funciones clave de un diccionario de datos se incluyen[cite: 2]:</p>
+          <ul>
+            <li>Promover coherencia de los datos entre plataformas y usuarios[cite: 2].</li>
+            <li>En apoyo de calidad de los datos documentando los formatos válidos y las restricciones[cite: 2].</li>
+            <li>Habilitación de integración de datos con correspondencias claras entre sistemas[cite: 2].</li>
+            <li>Mejorar la alfabetización informática mediante información accesible y estructurada[cite: 2].</li>
+            <li>Apoyando conformidad y auditabilidad con metadatos formalizados[cite: 2].</li>
+          </ul>
+          <p>Tanto si se construye manualmente como si se genera automáticamente, un diccionario de datos ayuda a los equipos a trabajar con confianza y eficacia[cite: 2].</p>
+          <p>La estructura de un diccionario de datos puede variar, pero lo habitual es que documente[cite: 2]:</p>
+          <ul>
+            <li>Nombres de campos o columnas (por ejemplo customer_id, fecha_pedido)[cite: 2].</li>
+            <li>Tipos de datos como cadena, entero, fecha o booleano[cite: 2].</li>
+            <li>Descripciones que explican la finalidad de cada campo[cite: 2].</li>
+            <li>Valores por defecto o restricciones cuando proceda[cite: 2].</li>
+            <li>Relaciones entre tablas o campos relacionados[cite: 2].</li>
+            <li>Sistemas de origen que indican el origen de los datos[cite: 2].</li>
+          </ul>
+          <p>Un diccionario de datos se centra en la estructura técnica de los datos[cite: 2]. Define cómo se nombran, formatean y relacionan los campos, por lo que resulta especialmente útil para ingenieros y desarrolladores de datos[cite: 2].</p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ÁREA DE CREADORES Y BIBLIOGRAFÍA -->
+    <section class="content-area section-view" id="creditsSection">
+      
+      <div class="concept-card green-theme">
+        <h2 class="concept-title" style="color: var(--neon-purple);">🏛️ UNIVERSIDAD AUTÓNOMA DE CAMPECHE</h2>
+        <div class="concept-body">
+          <p><strong>FACULTAD DE INGENIERÍA</strong></p>
+          <p><strong>LIC. EN INGENIERÍA EN SISTEMAS COMPUTACIONALES</strong></p>
+          <p><strong>UNIDAD DE APRENDIZAJE:</strong> BASES DE DATOS I</p>
+          <p><strong>PROFESOR(A):</strong> DRA. LUZ MARÍA HERNÁNDEZ CRUZ</p>
+          <p style="margin-top: 1rem; color: var(--neon-green); font-weight: bold;">"Del enigma sin albas a triángulos de luz"</p>
+        </div>
+
+        <div class="creators-grid">
+          <div class="creator-card">
+            <div class="creator-role">⭐ LÍDER DEL EQUIPO</div>
+            <div class="creator-name">JESUS MANUEL BOLON PECH</div>
+          </div>
+          <div class="creator-card">
+            <div class="creator-role">👨‍💻 INTEGRANTE</div>
+            <div class="creator-name">ALEXIS DANIEL SANTIAGO NARVAEZ</div>
+          </div>
+          <div class="creator-card">
+            <div class="creator-role">👩‍💻 INTEGRANTE</div>
+            <div class="creator-name">KATY DEL ROSARIO HERNANDEZ</div>
+          </div>
+          <div class="creator-card">
+            <div class="creator-role">👩‍💻 INTEGRANTE</div>
+            <div class="creator-name">ABRIL MONSERRAT MOO ESTRADA</div>
+          </div>
+          <div class="creator-card">
+            <div class="creator-role">👨‍💻 INTEGRANTE</div>
+            <div class="creator-name">JORGE EDUARDO PECH LANDERO</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h2 class="concept-title">📚 BIBLIOGRAFÍA COMPLETA</h2>
+        <ul class="biblio-list">
+          <li class="biblio-item">Amazon Web Services. (s. f.). <em>¿Cuál es la diferencia entre una base de datos ACID y una BASE?</em> Amazon Web Services, Inc. <a href="https://aws.amazon.com/es/compare/the-difference-between-acid-and-base-database/" target="_blank">Enlace AWS</a></li>
+          <li class="biblio-item">Oracle América Latina. (s. f.). <em>What is a database administrator (DBA)?</em> <a href="https://www.oracle.com/latam/database/what-is-a-dba/" target="_blank">Enlace Oracle</a></li>
+          <li class="biblio-item">DataCamp. (2025, April 24). <em>Atomicidad en las bases de datos: La columna vertebral de las transacciones fiables.</em> <a href="https://www.datacamp.com/es/tutorial/atomicity" target="_blank">Enlace DataCamp</a></li>
+          <li class="biblio-item">Alastairn. (2024, 22 mayo). <em>What is Database Consistency? Definition & FAQs | ScyllaDB.</em> ScyllaDB. <a href="https://www.scylladb.com/glossary/database-consistency/" target="_blank">Enlace ScyllaDB</a></li>
+          <li class="biblio-item">Cohesity. (2025, 27 julio). <em>Data Isolation | How It Works and Why It Matters?</em> <a href="https://www.cohesity.com/glossary/data-isolation/" target="_blank">Enlace Cohesity</a></li>
+          <li class="biblio-item">Content Studio. (2026, 10 agosto). <em>Qué es la durabilidad de datos.</em> <a href="https://www.everpuredata.com/la/knowledge/what-is-data-durability.html" target="_blank">Enlace Everpure Data</a></li>
+          <li class="biblio-item">Elmasri, R., & Navathe, S. B. (2007). <em>Fundamentos de sistemas de bases de datos</em> (5.ª ed.). Pearson Educación.</li>
+          <li class="biblio-item">Silberschatz, A., Korth, H. F., & Sudarshan, S. (2006). <em>Fundamentos de bases de datos</em> (5.ª ed.). McGraw-Hill.</li>
+          <li class="biblio-item">Cuadra, D., Castro, E., Iglesias, A., Martínez, P., Calle, F. J., de Pablo, C., Al-Jumaily, H., & Moreno, L. (2012). <em>Desarrollo de bases de datos: Casos prácticos desde el análisis a la implementación</em> (2.ª ed.). Ra-Ma.</li>
+          <li class="biblio-item">Piñeiro Gómez, J. M. (2014). <em>Bases de datos relacionales y modelado de datos.</em> Ediciones Paraninfo.</li>
+          <li class="biblio-item">Silberschatz, A., Korth, H. F., y Sudarshan, S. (2020). <em>Fundamentos de Bases de Datos</em> (7.ª ed.). McGraw-Hill.</li>
+          <li class="biblio-item">Elmasri, R., y Navathe, S. B. (2016). <em>Fundamentals of Database Systems</em> (7th ed.). Pearson.</li>
+          <li class="biblio-item">Date, C. J. (2004). <em>Introducción a los Sistemas de Bases de Datos</em> (8.ª ed.). Pearson Educación.</li>
+          <li class="biblio-item">Inesem Revista Digital. <em>Los gestores de bases de datos más usados.</em> <a href="https://www.inesem.es/revistadigital/informatica-y-tics/los-gestores-de-bases-de-datos-mas-usados" target="_blank">Enlace Inesem</a></li>
+          <li class="biblio-item">Concepto. (2018, abril 11). <em>Base de datos.</em> <a href="https://concepto.de/base-de-datos/" target="_blank">Enlace Concepto.de</a></li>
+          <li class="biblio-item">Ui1.es. (s/f). <em>Bases de datos no relacionales.</em> <a href="https://www.ui1.es/blog-ui1/bases-de-datos-no-relacionales" target="_blank">Enlace UI1</a></li>
+          <li class="biblio-item">BMC Software. (s/f). <em>Database ACID properties: Atomic, consistent, isolated, durable.</em> BMC Blogs. <a href="https://www.bmc.com/blogs/acid-atomic-consistent-isolated-durable/" target="_blank">Enlace BMC</a></li>
+          <li class="biblio-item">Casas, J., Josep, R., & Olivera, C. (s/f). <em>UOC.edu.</em> Coordinado por Àngels Rius Gavidia. <a href="https://openaccess.uoc.edu/server/api/core/bitstreams/bb70ad07-1ee9-46fe-9f15-fb6b40ad893c/content" target="_blank">Enlace UOC</a></li>
+          <li class="biblio-item">Db2 for Linux, UNIX and Windows. (2026, mayo 8). <em>IBM Docs.</em> <a href="https://www.ibm.com/docs/es/db2/12.1.x?topic=databases-designing" target="_blank">Enlace IBM DB2</a></li>
+          <li class="biblio-item">López, M. M. (2022, septiembre 8). <em>Qué son las llaves primarias y foráneas.</em> KeepCoding Bootcamps. <a href="https://keepcoding.io/blog/llaves-primarias-y-foraneas/" target="_blank">Enlace KeepCoding</a></li>
+          <li class="biblio-item">IBM. (2025, agosto 20). <em>¿Qué es el Modelado de Datos?</em> <a href="https://www.ibm.com/mx-es/think/topics/data-modeling" target="_blank">Enlace IBM Modelado</a></li>
+          <li class="biblio-item">UNIR México. (2024, abril 12). <em>¿Qué es el modelo entidad relación y para qué se utiliza?</em> <a href="https://mexico.unir.net/noticias/ingenieria/modelo-entidad-relacion/" target="_blank">Enlace UNIR</a></li>
+          <li class="biblio-item">IBM. (2025, agosto 20). <em>¿Qué es la arquitectura de tres niveles?</em> <a href="https://www.ibm.com/mx-es/think/topics/three-tier-architecture" target="_blank">Enlace IBM Arquitectura</a></li>
+          <li class="biblio-item">Raído, G. (2025, junio 26). <em>¿Qué importancia tienen las bases de datos a nivel empresarial?</em> DataCentric Marketing. <a href="https://www.datacentric.es/blog/bases-datos/importancia-bases-de-datos-2/" target="_blank">Enlace DataCentric</a></li>
+          <li class="biblio-item">Actian. (s/f). <em>What is cardinality?</em> <a href="https://www.actian.com/es/what-is-cardinality/" target="_blank">Enlace Actian Cardinality</a></li>
+          <li class="biblio-item">Actian. (s/f). <em>Data Dictionary.</em> <a href="https://www.actian.com/es/glossary/data-dictionary/" target="_blank">Enlace Actian Dictionary</a></li>
+        </ul>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- SCRIPT DE INTERACTIVIDAD -->
+  <script>
+    // 1. GENERAR ÍNDICE AUTOMÁTICO
+    function buildIndex() {
+      const indexList = document.getElementById('indexList');
+      const cards = document.querySelectorAll('#glossarySection .concept-card');
+      indexList.innerHTML = '';
+
+      cards.forEach(card => {
+        const titleText = card.querySelector('.concept-title').innerText;
+        const id = card.id;
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.innerText = titleText;
+        a.onclick = () => switchTab('glossary');
+
+        li.appendChild(a);
+        indexList.appendChild(li);
+      });
+    }
+
+    // 2. BUSCADOR EN TIEMPO REAL
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      switchTab('glossary');
+
+      const cards = document.querySelectorAll('#glossarySection .concept-card');
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(term)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    // 3. CAMBIO DE PESTAÑAS
+    function switchTab(tab) {
+      const glossarySection = document.getElementById('glossarySection');
+      const creditsSection = document.getElementById('creditsSection');
+      const sidebarIndex = document.getElementById('sidebarIndex');
+      const btnGlossary = document.getElementById('btnGlossary');
+      const btnCredits = document.getElementById('btnCredits');
+
+      if (tab === 'glossary') {
+        glossarySection.classList.add('active');
+        creditsSection.classList.remove('active');
+        sidebarIndex.style.display = 'block';
+        btnGlossary.classList.add('active');
+        btnCredits.classList.remove('active');
+      } else {
+        glossarySection.classList.remove('active');
+        creditsSection.classList.add('active');
+        sidebarIndex.style.display = 'none';
+        btnCredits.classList.add('active');
+        btnGlossary.classList.remove('active');
+      }
+    }
+
+    // Inicializar la carga del índice
+    buildIndex();
+  </script>
+</body>
+</html>
